@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset= "utf-8">
+    <title>Find A Room!</title>
+    <meta name="description" content="A mobile app which can help you check the availability of the room.">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href='https://fonts.googleapis.com/css?family=Press+Start+2P' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css" />
+    <script src="http://code.jquery.com/jquery-2.1.4.min.js"></script>
+    <script src="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
+    <script>
+      $(document).on("mobileinit", function(event) {
+      console.log("mobileinit");
+      });
+
+      $(document).on("pagechange", function(event) {
+      console.log("pagechange: "+event.currentTarget.URL);
+      });
+
+      $(window).on("orientationchange", function(event) {$('#orientation').text('This device is in '+ event.orientation + 'mode.')
+      });
+
+      setInterval(function(){
+        myFunction();
+      }, 4000);
+
+      
+      function myFunction() {
+        $( '#show_status' ).empty().append(function(){
+            $(document).ready(function() {
+              console.log('ready');
+
+          $.ajax({ 
+            method: "GET",
+            url: "http://172.26.107.89:8888/rest/rest.php/readings/",
+            dataType: 'jsonp',
+            jsonp: 'callback',
+            jsonpCallback: 'success_jsonp',
+            success: function(json) {
+              console.log(json);
+              try {
+                 var currentStatus = json.api.value;
+                 console.log(currentStatus);
+                 if (currentStatus == 0) {
+                    $( '#show_status' ).append("<p style='font-size: 100%; color: #00E51C;'>Available</p>");
+                 }
+                 if (currentStatus == 1) {
+                     $( '#show_status' ).append("<p style='font-size: 100%; color: #FC0000;'>Unavailable</p>");
+                 }
+              }catch(error) { 
+                console.log('error', error);
+              }
+            }
+          });
+        });
+        });
+        
+      }
+    
+    </script>
+  </head>
+  <body>
+
+    <div data-role="page" id="main" style="min-height:100%; position:relative;">
+
+      <div data-role="header" style="background: #848FFF;">
+        <h1 style="font-size:200%; font-family: 'Press Start 2P', cursive;">Find<br /> A<br /> Room</h1>
+      </div> 
+
+      <div class="uni-content" id="frame">
+        <ul data-role="listview" data-inset="true" style="padding-bottom:190px; background: #848FFF;">
+          <li data-icon="data" id="show_data" style="font-size: 80%; font-family: 'Press Start 2P', cursive;">Room IMA Studio (823) : <br /><div id="show_status">Loading...</div></li>
+          <li data-icon="data" id="show_data2" style="font-size: 70%; font-family: 'Press Start 2P', cursive;">Room 818 : Unknown</li>
+          <li data-icon="data" id="show_data2" style="font-size: 70%; font-family: 'Press Start 2P', cursive;">Room 101 : Unknown</li>
+          <li data-icon="data" id="show_data2" style="font-size: 70%; font-family: 'Press Start 2P', cursive;">Room 102 : Unknown</li>
+        </ul>
+      </div>
+
+      <div data-role="footer">
+        <h2 style="font-size:50%; font-family: 'Press Start 2P', cursive; width:100%; position:absolute; padding-bottom:0;">NYU Shanghai Developing Web Final<br />Designed by Sunny Pu</h2>
+      </div>
+      
+    </div>
+
+  </body>
+</html>
